@@ -118,11 +118,30 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	YOUR CODE HERE:
 	***/
 
+	const departurelest = d3.nest()
+		.key(function(d) {return d.stations})
+		.entrian(trips)
+	consol.log(departurelest);
+
+
 	/***
 	4.2 Further "collapse" this array, so that for each departure stations, we have the number of trips departing from each
 	Hint: there are multiple ways of doing this, including using d3.nest.rollup, but attempt this with what we've learned in this assignment
 	YOUR CODE HERE:
 	***/
+
+
+	consol.log(departurelest);
+
+	const departureValueByStation0 = departurelest
+		.map(function(d){
+			return {
+				key: d.key,
+				value: d.value
+
+			}});
+
+	console.log(departureValueByStation0);
 
 	/***
 	5.0 BONUS Question
