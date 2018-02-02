@@ -115,7 +115,7 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	console.log(w,h);
 
 	//Scale
-	const scaleX = d3.scaleLinear().domain([0,maxVolume]).range([0,w]);
+	const scaleX = d3.scaleLinear().domain([0,maxVolume]).range([0, _w]);
 
 
 
