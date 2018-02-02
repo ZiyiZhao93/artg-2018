@@ -1,21 +1,24 @@
 import * as d3 from 'd3';
 
-function Histogram(_){
+export default function activityHistogram(data, i){
 
-	//Internal configuaration
-	let maxVolume = _;
-	let margin = {t:15,r:25,b:25,l:25};
-	let ticksY = 5;
-	let defalutColor = 
+	console.log(data);
+	console.log(i);
+	console.log(this);
 
-	function exports(data,i){
-
-	// exports == activityHistogram
+	/* "data" --> {
+		key:"47"
+		values:[
+			{trip},
+			{trip},
+			...
+		]
+	}*/
 
 	//Need to append a the proper DOM scaffolding
 	const width = this.clientWidth; //What is "this"?
 	const height = this.clientHeight;
-	//const margin = {t:15,r:25,b:25,l:25}; //top,right,bottum,lift
+	const margin = {t:15,r:25,b:25,l:25}; //top,right,bottum,lift
 	const w = width - margin.l - margin.r;
 	const h = height - margin.t - margin.b;
 
@@ -47,7 +50,7 @@ function Histogram(_){
 
 	//Set up scales in the x and y direction
 	const scaleX = d3.scaleLinear().domain([0,24]).range([0,w]);
-	//const maxVolume = d3.max(tripsByQuarterHour, d => d.volume);
+	const maxVolume = d3.max(tripsByQuarterHour, d => d.volume);
 	const scaleY = d3.scaleLinear().domain([0,maxVolume]).range([h,0]);
 
 	//Set up axis generator
@@ -89,7 +92,7 @@ function Histogram(_){
 		.attr('width', d => (scaleX(d.x1) - scaleX(d.x0)))
 		.attr('y', d => scaleY(d.volume))
 		.attr('height', d => (h - scaleY(d.volume)))
-		.style('fill', defalutColor);
+		.style('fill','pink');
 
 	//Exit
 	binsUpdate.exit().remove();
@@ -118,64 +121,5 @@ function Histogram(_){
 	axisYNodeEnter.selectAll('line')
 		.style('stroke','lightblue')
 		.style('stroke-dasharray','2px 2px');
-	}
-
-
-	//Setter and getter function
-	exports.width = function(_){
-
-	}
-
-	exports.height = function(_){
-
-	}
-
-	exports.margin = function(_){
-		margin = _;
-	}
-
-	exports.value = function(fn){
-
-	}
-
-	exports.domain = function(_){
-
-	}
-
-	exports.maxVolume = function(_){
-		maxVolume = _;
-	}
-
-	exports.ticksY = function(_){
-		ticksY = _;
-		//if return to this, this is exports
-	}
-
-	exports.defalutColor = function(_){
-		defalutColor = _; //assuming _ is CSS color string
-	}
-
-	return exports;
 
 }
-
-export default Histogram;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

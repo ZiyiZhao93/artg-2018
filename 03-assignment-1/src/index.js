@@ -36,6 +36,11 @@ function activityHistogram(data){
 	const histogram = d3.histogram()
 		.value(d => d.time_of_day0)
 		.thresholds(d3.range(0,24,.25));
+/*
+	console.log(data); //all trips
+	console.log(histogram); //function
+	console.log(histogram(data)); //24 hours, 4 for each hours
+*/
 	const tripsByQuarterHour = histogram(data)
 		.map(d => {
 			return {
@@ -68,25 +73,48 @@ function activityHistogram(data){
 
 	//Draw
 	/*** YOUR CODE HERE ***/
-
-
-
-
+	const binUpdate = d3.select(this)
+		.selectAll('.bin') //selection of 0 elements
+		.data(tripsByQuarterHour); //array of 96 bins
+	//enter
+	const binsEnter = binUpdate.enter()
+		.append('rect')
+		.attr('class','bin')
+		.attr('x', d => scaleX(d.x0))
+		.attr('width', d => (scaleX(d.x1) - scaleX(d.x0) - 1))
+		.attr('y', d => h)
+		.attr('height', 0)
+		.style('fill', 'pink');
+	//enter + update
+	binsEnter.merge(binUpdate)
+		.transition()
+		.duration(2000) //the number big means bar change color slow
+		.attr('x', d => scaleX(d.x0))
+		.attr('width', d => (scaleX(d.x1) - scaleX(d.x0) - 1))
+		.attr('y', d => scaleY(d.volume))
+		.attr('height', d => (h - scaleY(d.volume)))
+		.style('fill', 'lightblue');
+	//Exit
+	binUpdate.exit().remove();
 
 
 	/*** YOUR CODE HERE ***/
 
 	//Axis
 	const axisXNode = d3.select(this)
-		.selectAll('.axis-x')
-		.data([1]);
-	const axisXNodeEnter = axisXNode.enter()
-		.append('g')
+		.selectAll('.axis-x') //selection of size 1
+		.data([1]); //data array of 1 element
+		//enter set will be size 0
+		//exit 0
+		//update 1
+	const axisXNodeEnter = axisXNode.enter() //null
+		.append('g') //will not take place
 		.attr('class','axis-x');
+	//<g.asix-X>
 	axisXNode.merge(axisXNodeEnter)
 		.attr('transform',`translate(0,${h})`)
 		.call(axisX);
-
+	//draw the axis on <g.axis-x>
 	const axisYNode = d3.select(this)
 		.selectAll('.axis-y')
 		.data([1]);
