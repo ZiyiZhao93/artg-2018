@@ -3,7 +3,7 @@ import Histogram from './Histogram';
 
 import '../style/main.css';
 
-function MainViz(_) {
+function MainViz(_){
 
 	const timeline = Histogram()
 		.domain([new Date(2013,0,1), new Date(2013,11,31)])
@@ -14,9 +14,9 @@ function MainViz(_) {
 		})
 		.tickX(3)
 		.tickY(2)
-		.maxY(400);
+		.maxY(400)
 
-	function exports(data, i){
+	function exports(data,i){
 
 		const width = this.clientWidth;
 		const height = this.clientHeight;
@@ -32,27 +32,24 @@ function MainViz(_) {
 
 		console.log(tripsByStation);
 
-
-		//Creat a node for each station
+		//Create a node for each station
 		//call timeline module on each node
 		const stationNodes = d3.select(this)
 			.selectAll('.station-node')
 			.data(tripsByStation); //update selection of size 0
 		const stationNodesEnter = stationNodes.enter()
 			.append('div')
-			.classed('station-node', true)
-			.style('width', '300px')
-			.style('height', '180px')
-			.style('float', 'left');
-
+			.classed('station-node',true)
+			.style('width','300px')
+			.style('height','180px')
+			.style('float','left');
 		stationNodes.exit().remove();
 
 		stationNodesEnter.merge(stationNodes)
 			.each(timeline);
 
-
-
 	}
+
 	return exports;
 }
 
