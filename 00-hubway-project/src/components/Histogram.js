@@ -1,9 +1,20 @@
 import * as d3 from 'd3';
 import '../style/histogram.css';
 
-function histogram(data,i){
+function Histogram(_){
+	//factory function
 
-	const root = this;
+	let _thresholds;
+	let _domain;
+	let _value = () => {}; //function
+	let _tickX = 6;
+	let _tickY = 5;
+	let _tickXFormat = d => d
+	let _maxY = -Infinity;
+
+	function exports(data,i){
+
+		const root = this;
 
 	const width = root.clientWidth; 
 	const height = root.clientHeight;
@@ -27,8 +38,9 @@ function histogram(data,i){
 	//Transform data
 	//Group trips into discrete 15 minute bins, using the d3.histogram layout
 	const histogram = d3.histogram()
-		.value(d => d.time_of_day0)
-		.thresholds(d3.range(0,24,.25));
+		.value(_value)
+		.thresholds(_thresholds)
+		.domain(_domain);
 	const tripsByQuarterHour = histogram(data)
 		.map(d => {
 			return {
@@ -39,26 +51,20 @@ function histogram(data,i){
 		});
 
 	//Set up scales in the x and y direction
-	const scaleX = d3.scaleLinear().domain([0,24]).range([0,w]);
+	const scaleX = d3.scaleLinear().domain(_domain).range([0,w]);
 	const maxVolume = d3.max(tripsByQuarterHour, d => d.volume);
-	const scaleY = d3.scaleLinear().domain([0,maxVolume]).range([h,0]);
+	const scaleY = d3.scaleLinear().domain([0, Math.max(_maxY,maxVolume)]).range([h,0]);
 
 	//Set up axis generator
 	const axisY = d3.axisLeft()
 		.scale(scaleY)
-		.tickSize(-w)
-		.ticks(5);
+		.tickSize(-w) //negitive  width
+		.ticks(_tickY);
 
 	const axisX = d3.axisBottom()
 		.scale(scaleX)
-		.ticks(6)
-		.tickFormat(d => {
-			const time = +d;
-			const hour = Math.floor(time);
-			let min = Math.round((time-hour)*60);
-			min = String(min).length === 1? "0"+ min : min;
-			return `${hour}:${min}`
-		});
+		.ticks(_tickX)
+		.tickFormat(_tickXFormat);
 
 	//Draw
 	//Bars
@@ -109,6 +115,72 @@ function histogram(data,i){
 	axisYNode.merge(axisYNodeEnter)
 		.call(axisY);
 
+	}
+
+	//Getter/setter
+	exports.thresholds = function(_){
+		// _ is array of thresholds
+		if(typeof _ === 'undefund') return _thresholds;
+		_thresholds = _;
+		return this;
+	}
+
+	exports.domain = function(_){
+		if(typeof _ === 'undefund') return _domain;
+		_domain = _;
+		return this;
+	}
+
+	exports.value = function(fn){
+		if(typeof fn === 'undefund') return _value;
+		_value = fn;
+		return this;
+	}
+
+	exports.tickX = function(_){
+		if(typeof _ === 'undefund') return _tickX;
+		_tickX = _;
+		return this;
+	}
+
+	exports.tickY = function(_){
+		if(typeof _ === 'undefund') return _tickY;
+		_tickY = _;
+		return this;
+	}
+
+	exports.tickXFormat = function(fn){
+		if(typeof fn === 'undefund') return _tickXFormat;
+		_tickXFormat = fn;
+		return this;
+	}
+
+	exports.margin = function(_){
+		if(typeof _ === 'undefund') return _margin;
+		_margin = _;
+		return this;
+	}
+
+	exports.maxY = function(_){
+		if(typeof _ === 'undefund') return _maxY;
+		_maxY = _;
+		return this;
+	}
+
+	return exports;
 }
 
-export default histogram;
+
+export default Histogram;
+
+
+
+
+
+
+
+
+
+
+
+
