@@ -1,3 +1,5 @@
+'use strict'
+
 import * as d3 from 'd3';
 import './style/main.css';
 import './style/stationSearch.css';
@@ -6,58 +8,35 @@ import './style/stationSearch.css';
 import {parse, parse2, parseStation, fetchCsv} from './utils';
 
 //Import modules
-import Histogram from './components/Histogram';
+import Histogram, {timeline, activityHistogram} from './components/Histogram'; //both default and named export
 import MainViz from './components/mainViz';
 import Animation from './components/Animation';
+import Model from './components/Model';
 
-//Histogram
-//factory
-const timeline = Histogram()
-	.domain([new Date(2013,0,1), new Date(2013,11,31)])
-	.value(d => d.t0)
-	.thresholds(d3.timeMonth.range(new Date(2013,0,1), new Date(2013,11,31), 1))
-	.tickXFormat(d => {
-		return (new Date(d)).toUTCString();
-	})
-	.tickX(2);
+//Create modules
+const mainViz = MainViz();
+const animation = Animation( document.querySelector('.main') );
+//Note that these modules are created in and exported from  './components/Histogram.js'
+//--activityHistogram
+//--timeline
 
-const activityHistogram = Histogram()
-	.thresholds(d3.range(0,24,.5))
-	.domain([0,24])
-	.value(d => d.time_of_day0)
-	.tickXFormat(d => {
-		const time = +d;
-		const hour = Math.floor(time);
-		let min = Math.round((time-hour)*60);
-		min = String(min).length === 1? "0"+ min : min;
-		return `${hour}:${min}`
-	})
-	.maxY(1000);
-
-const mainViz = MainViz(); //a closure
-
-const animation = Animation(
-	document.querySelector('.main') //DOM Node of <div class="main">
-	);
-/*
-fetchCsv('./data/hubway_trips_reduced.csv',parse) //this a Promise, and it will give you the data in hubway_trips_reduced.csv
-	.then((resolvedValue) => {
-		console.log(resolvedValue);
-	})
-
-fetchCsv('./data/hubway_stations.csv',parseStation)
-	.then((resolvedValue) => {
-		console.log(resolvedValue);
-	})
-*/
 //Import data using the Promise interface
 Promise.all([
-	//add a Promise that artificially resolves after 10s
 		fetchCsv('./data/hubway_trips_reduced.csv', parse),
 		fetchCsv('./data/hubway_stations.csv', parseStation)
 	]).then(([trips, stations]) => {
 
-		d3.select('#time-of-the-day-main') //creat a selection
+		//Perform some basic data discovery
+		//What is the time range of the data set?
+		const t0 = d3.min(trips, d => d.t0);
+		const t1 = d3.max(trips, d => d.t1);
+
+		//With this information, reconfigure timeline module
+		timeline
+			.domain([t0, t1])
+			.thresholds(d3.timeMonth.range(t0,t1,1));
+
+		d3.select('#time-of-the-day-main')
 			.datum(trips)
 			.each(activityHistogram);
 
@@ -65,20 +44,27 @@ Promise.all([
 			.datum(trips)
 			.each(timeline);
 
-		//We will not draw mainViz for now
-		// d3.select('.main')
-		// 	.datum(trips)
-		// 	.each(mainViz);
+		animation(trips, stations);
 
-		animation(trips,stations);
+});
 
-	
+timeline.on('mousemove:x', x => {
+	//this is how we use it
+	//timeline is the same things like export
+	//() => is call back function
+	//eventType: string of event type
+	//cb: function
+	animation.time(new Date(x));
+})
 
-	});
+animation
+	.on('select:station', station => {
+		console.log(station);
 
-
-
-
+	})
+	.on('unselect:station', () => {
+		
+	})
 
 
 
