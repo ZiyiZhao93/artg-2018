@@ -41,11 +41,15 @@ let elements = plot
 	.selectAll('.element')
 	.data(nodes);
 elements = elements.enter()
-	.append('rect')
+	.append('circle')
 	.classed('element',true)
 	.merge(elements)
-	.attr('x',-5)
-	.attr('y',-5)
+	.attr('cx',-5)
+	.attr('cy',-5)
+	.attr('r', 3)
+	.attr('fill', 'none')
+	.attr('stroke', '#F0E68C')
+  	.attr('stroke-width', 0.5)
 	.attr('width',10)
 	.attr('height',10);
 
@@ -53,19 +57,24 @@ elements = elements.enter()
 const simulation = forceSimulation();
 //Force simulation can be customized by the addition of different forces
 const center = forceCenter(w/2,h/2);
-const xPos = forceX();
-const yPos = forceY();
+const xPos = forceX().x(d => d.value>.5?w*2/3:w/3);
+const yPos = forceY().y(h/2);
 const charge = forceManyBody().strength(.1);
 const collide = forceCollide().radius(d => d.value*10);
 //Now customize the force layout
 simulation
 	.force('charge',charge)
 	.force('collide',collide)
-	//.force('xPos',xPos)
-	//.force('yPos',yPos)
+	.force('xPos',xPos)
+	.force('yPos',yPos)
 	.force('center',center)
 	.nodes(nodes)
 	.on('tick', () => {
 		//YOUR CODE HERE
+		elements
+			.attr('transform', d => `translate(${d.x},${d.y})`);
+	})
+	.on('end', () => {
+		console.log('Simulation end')
 	});
 
