@@ -102,6 +102,9 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	YOUR CODE HERE:
 	***/
 
+	const sliced = Array.prototype.slice.call(registeredTrips);
+	console.log(sliced);
+
 	/**
 	3.4 Instead of an array of trips, generate a completely new array of departure timestamps (i.e. t0)
 	Hint: use Array.prototype.map
@@ -120,7 +123,8 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 
 	const departurelest = d3.nest()
 		.key(function(d) {return d.stations})
-		.entrian(trips)
+		.entrian(trips);
+
 	consol.log(departurelest);
 
 
@@ -130,18 +134,8 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	YOUR CODE HERE:
 	***/
 
-
-	consol.log(departurelest);
-
-	const departureValueByStation0 = departurelest
-		.map(function(d){
-			return {
-				key: d.key,
-				value: d.value
-
-			}});
-
-	console.log(departureValueByStation0);
+	const lengthDeparture = d3.nest().key(function(d){return d.station0}).rollup(function(v){return v.length}).entries(trips);
+	console.log(lengthDeparture);
 
 	/***
 	5.0 BONUS Question
@@ -149,6 +143,24 @@ d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){
 	Hint: Javascript has a built-in Math.max(...) function
 	YOUR CODE HERE:
 	***/
+
+	const durationArray = trips.map(function(d){return d.duration;});
+	console.log(durationArray);
+
+	let max = -Infinity;
+	let min = +Infinity;
+
+for (let i = 0; i < durationArray.length; i++) {
+  if (durationArray[i] > max) {
+    max = durationArray[i];
+  }
+  if (durationArray[i] < min) {
+    min = durationArray[i];
+  }
+}
+
+
+
 });
 
 console.log('After d3.csv');

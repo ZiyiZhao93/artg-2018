@@ -39,6 +39,12 @@ somePromise.then(function(res){
 
 /*** YOUR CODE HERE ***/
 
+const myPromise = new Promise(function(resolve,reject){
+
+	resolve("Hello World");
+})
+
+console.log(myPromise);
 
 
 /*** YOUR CODE HERE ***/
@@ -54,6 +60,15 @@ const rejectHelloWorld = Promise.reject(new Error("Hello world"));
 //How do you access the resolved "Hello world" and rejected error from above? Please console.log them out
 
 /*** YOUR CODE HERE ***/
+
+resolveHelloWorld.then(function(res){
+
+	console.log('The resolution value of promise is ' + res);
+});
+
+rejectHelloWorld.then(function(){}, function(err){
+	console.log(err);
+})
 
 
 

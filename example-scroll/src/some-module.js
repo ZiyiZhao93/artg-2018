@@ -33,7 +33,9 @@ function SomeModule(){
 
 	exports.changeState = state => {
 		circleNode.transition()
-			.attr('cx', state);
+			.attr('cx', state.x)
+			.attr('cy', state.y)
+			.attr('r', state.r);
 	}
 
 	return exports;

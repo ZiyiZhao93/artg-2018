@@ -8,6 +8,15 @@ import Timeline from './Timeline';
 
 console.log('Week 4 exercise 2');
 
+const timeline = Timeline();
+
+timeline
+	.defaultFill('green')
+	.defaultStroke('blue')
+	.maxVolume(75)
+	.timeInterval(d3.timeWeek)
+	.timeRange([new Date(2012,2,1), new Date(2012,11,31)])
+
 
 //Import and parse data
 d3.csv('./data/hubway_trips_reduced.csv', parse, function(err,trips){

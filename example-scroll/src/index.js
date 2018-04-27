@@ -33,13 +33,43 @@ const scene2 = new Scrollmagic.Scene({
 	.on('enter', () => {
 		console.log('Scene-2:enter')
 		select('.app-container')
-			.style('background','blue');
+			.style('background','lightblue');
+
+		someModule.changeState({
+			x:300,
+			y:500,
+			r:30
+		});
 
 	})
 	.on('leave', () => {
 		console.log('Scene-2:end')
 		select('.app-container')
+			.style('background','pink');
+
+
+		someModule.changeState({
+			x:0,
+			y:200,
+			r:5
+		});
+
+	})
+	.addTo(controller);
+
+const scene3 = new Scrollmagic.Scene({
+		triggerElement:'#scene-3'
+	})
+	.on('enter', () => {
+		console.log('Scene-3:enter')
+		select('.app-container')
 			.style('background','yellow');
+
+	})
+	.on('leave', () => {
+		console.log('Scene-3:end')
+		select('.app-container')
+			.style('background','lightblue');
 
 	})
 	.addTo(controller);
